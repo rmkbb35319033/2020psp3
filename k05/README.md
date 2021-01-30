@@ -117,6 +117,18 @@ int AdjacencyMatrix[MAX_STATIONS][MAX_STATIONS] = {
 -隣接行列を利用して、そのindexから行ける場所を探索し、行ける場所はキューに入れる。
 -キューが空になったら終了。
 
+・SearchGraphByDijkstra(ダイクストラ法)
+-costを全て9999,fixedを全て0に初期化する。
+-cost[start]を0、from[start]を-1,
+所要時間が一番短いノードを探すためのminをINF_COST(9999)にして処理を開始する。
+-1つ目のwhileを無限ループにする。
+-1つ目のforで、fixedが0かつコストが一番小さい場所のindexをmin_indexに格納する。
+-forから抜けたと同時に、fixed[min_index]を1にして確定ノードを一つ作る。
+-min_index(確定されたノード)がgoalならwhileを抜ける。
+-隣接行列を用いて、min_indexの行を見ていき、0より大きい、つまり行くことのできる場所かつ、確定していないノードの中から所要時間が短くできれば更新する。同時に、from[i]をmin_indexで更新して辿れるようにしておく。
+-forを抜けたら、次の一番短いノードを探すためにminをINF_COSTに戻しておく。
+-whileを抜けたら、fromの値を辿ることで最短ルートをprintし、cost[goal]をreturnする。
+
 
 
 ## 出力結果
@@ -141,7 +153,14 @@ int AdjacencyMatrix[MAX_STATIONS][MAX_STATIONS] = {
 石橋
 崇福寺
 蛍茶屋
-Time Required: 8
+--------------------------------------
+[SearchGraphByDijkstra]
+蛍茶屋
+市民会館
+長崎駅前
+長崎大学前
+赤迫
+Time Required: 32
 ```
 
 ## 修正履歴

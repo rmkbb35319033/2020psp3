@@ -106,7 +106,26 @@ int StackIsEmpty(void)
 void DepthFirstSearch(int size, int matrix[size][size], int start)
 {
     //  ここを実装する
+    int visited[size];
+    int i,j,val;
+    for(i=0;i<size;i++){
+        visited[i]=0;
+    }
+    StackInit;
+    StackPush(start);
 
+    while(StackIsEmpty()==FALSE){
+        val = StackPop();
+        if(visited[val]==0){
+            visited[val] = 1;
+            PrintStationName(val);
+            for(j=0;j<size;j++){
+                if(matrix[val][j]!=0){
+                    StackPush(j);
+                }
+            }
+        }
+    }
 }
 
 
@@ -172,6 +191,26 @@ int QueueIsEmpty()
 void BreadthFirstSearch(int size, int matrix[size][size], int start)
 {
     //  ここを実装する
+    int visited[size];
+    int i,j,val;
+    for(i=0;i<size;i++){
+        visited[i]=0;
+    }
+    InitQueue;
+    EnQueue(start);
+
+    while(QueueIsEmpty()==FALSE){
+        val = DeQueue();
+        if(visited[val]==0){
+            visited[val] = 1;
+            PrintStationName(val);
+            for(j=0;j<size;j++){
+                if(matrix[val][j]!=0){
+                    EnQueue(j);
+                }
+            }
+        }
+    }
 
 }
 
@@ -180,8 +219,53 @@ void BreadthFirstSearch(int size, int matrix[size][size], int start)
 
 int SearchGraphByDijkstra(int start, int goal, int size, int matrix[size][size])
 {
-    //  ここを実装する
+int i,min,min_index;
+int cost[size],fixed[size],from[size];
 
+    for(i=0;i<size;i++){
+        cost[i]  = INF_COST;
+        fixed[i] = 0;
+    }
+    cost[start] = 0;
+    from[start] = -1;
+
+    min = INF_COST;
+
+    while(1){
+        //2-1確定していないノードから、所要時間が一番短いノード(target)を見つけ、新しい確定ノードとする。
+        for(i=0;i<size;i++){
+            if(fixed[i] == 0){
+                if(min > cost[i]){
+                    min = cost[i];
+                    min_index = i;
+                }
+            }
+        }
+        fixed[min_index] = 1;
+
+        if(min_index == goal){
+            break;
+        }
+        //2-2新しいノードからの所要時間で、確定していないノードの値を更新する
+        for(i=0;i<size;i++){
+            if(matrix[min_index][i]>0){
+                if(fixed[i] == 0){
+                    //値を調べて更新
+                    if(cost[i] > cost[min_index] + matrix[min_index][i]){
+                        cost[i] = cost[min_index] + matrix[min_index][i];
+                        from[i] = min_index;
+                    }
+                }
+            }
+        }
+        min = INF_COST;
+    }
+    i = goal;
+    while(i != -1){
+        PrintStationName(i);
+        i = from[i];
+    }
+    return cost[goal];//goalまでの所要時間
 }
 
 
@@ -189,10 +273,14 @@ int SearchGraphByDijkstra(int start, int goal, int size, int matrix[size][size])
 int main(void)
 {
     int cost;
-
+    printf("[DepthFirstSearch]\n");
     DepthFirstSearch(MAX_STATIONS, AdjacencyMatrix, 0);
+    printf("--------------------------------------\n");
+    printf("[BreadthFirstSearch]\n");
     BreadthFirstSearch(MAX_STATIONS, AdjacencyMatrix, 0);
 
+    printf("--------------------------------------\n");
+    printf("[SearchGraphByDijkstra]\n");
     cost = SearchGraphByDijkstra(0, 7, MAX_STATIONS, AdjacencyMatrix);
     printf("Time Required: %d\n", cost);
 

@@ -1,5 +1,5 @@
 # 課題3 レポート
-学生番号　氏名
+学生番号　35319033 氏名 濱江堅登
 
 
 ## 課題  
@@ -10,7 +10,7 @@
 
 1. 使用するデータ  
 以下のデータを使用する。ただし、検索対象文字列、検索する文字列は変更しても良い。  
-    - StrOriginal: 検索対象データ
+       - StrOriginal: 検索対象データ
     - StrKey: 検索する文字列
 
 2. 必須問題：実装する関数  
@@ -35,13 +35,36 @@
 なし
 
 ## ソースコードの説明
+ForceSearchについて
+-まず、textのスタート位置とkeyの位置を定義する。
+-そして、text,keyそれぞれの長さを求める。
+-1つ目のforでstart位置がを(text_len-key_len)より小さい間に繰り返す処理を行う。
+-2つ目のforでpos位置がkey_lenより小さい間に繰り返す処理を行う。
+-2つ目のforの中で、１つ目のifで、textとkeyの文字が一致するかどうかで条件分岐し、elseならbreakしてループを抜け出す。
+-1つ目のifがtruthなら、さらに2つ目のifで、keyの長さとpos位置が一致したらreturn値を返す
+
+BMSearchについて
+-初めに、ずらし量テーブルを作成する。まず、256個の配列にkeyの長さ分を代入し、その後、key文字毎にずらし量を代入しなおす。
+-次に比較を開始していく。
+-比較開始位置をstartとし、key_len-1を代入する。
+-比較開始位置がtextの最後尾に来るまでwhileで処理を繰り返す。
+-while内のfor文でtextとkeyの比較を行う。
+-startとposをループ毎に-1して更新しながら比較していくので、start2にstartの値を保持しておく。
+-比較位置posが0になるまでforが続いたら、全ての文字が一致したことになるので、&text[start]をして終了する。
+-文字の比較が一致しなかったら、そこでfor文からbreakする。
+-開始位置ずらしは、作成されたテーブル通りに、forをbreakしたタイミングで行う。
+-また、比較開始位置が同じか前の場合は、前回の開始位置の次から開始するように最後のifで場合分けを行った。
+
+
 
 
 
 ## 出力結果
 
 ```
-
+PS C:\Users\kento\Documents\GitHub\2020psp3\k03> ./k03
+Force Search. Find keyword at:wind in my hair.
+BM Search. Find keyword at: wind in my hair.
 ```
 
 ## 修正履歴

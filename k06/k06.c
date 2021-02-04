@@ -73,6 +73,61 @@ void DynamicProgLimited(Menu arrayItem[], int items, int nap_size)
 
     //　ここを実装する
 
+    int i,j,k,pre_j,cur_j;
+
+    printf("input (items,nap_size) = (%d,%d)\n",items,nap_size);
+
+    for(i = 0; i <= NUM_ITEMS; i++){     //表を0で初期化する。
+        for(j = 0; j <= NAP_SIZE; j++){
+            nap_value[i][j] = 0;   
+            history[i][j] = 0;
+        }
+    }
+
+    /*
+    表に0以外の値が入っていたらプログラムを終了する。
+    for(i = 0; i <= NUM_ITEMS; i++){
+        for(j = 0; j <= NAP_SIZE; j++){
+            if(nap_value[i][j] != 0){    
+                printf("Initialization failure\n");
+                exit(1);
+            }
+        }
+    }
+    */
+
+
+    for(i = 1; i <= NUM_ITEMS; i++){    
+        for(j = 1; j < arrayItem[i-1].price; j++){  //(1)価格が収まりきらない場所までは上の状態を引き継ぐ。
+            nap_value[i][j] = nap_value[i-1][j];
+            history[i][j] = j;  //historyにはベースとなったセルのjを記録しておく。
+        }
+
+        for(j; j <= NAP_SIZE; j++){     //(1)forの処理の続き。NAP_SIZE列まで処理を続ける。
+            if(nap_value[i-1][j] < nap_value[i-1][j-arrayItem[i-1].price] + arrayItem[i-1].calorie){
+                nap_value[i][j] = nap_value[i-1][j-arrayItem[i-1].price] + arrayItem[i-1].calorie;  //新しい商品を入れる方が大きくなるなら入れる。
+                history[i][j] = j - arrayItem[i-1].price;
+            }else{
+                nap_value[i][j] = nap_value[i-1][j];
+                history[i][j] = j;
+            }
+        }
+    }
+
+    printf("max calorie = %d\n",nap_value[NUM_ITEMS][NAP_SIZE]);
+
+    printf("---[Included menu]---\n");
+
+    cur_j = NAP_SIZE;
+    for(i = NUM_ITEMS; i > 0; i--){
+        pre_j = history[i][cur_j];
+
+        if(pre_j != cur_j){
+            printf("%d:%s\n",arrayItem[i-1].id,arrayItem[i-1].name);
+
+            cur_j = pre_j;
+        }
+    }
 
 }
 
@@ -87,5 +142,6 @@ int main(void)
 
     //  動的プログラムで最大摂取カロリーを求める
     DynamicProgLimited(arrayItem, cnt, NAP_SIZE);
+
     return 0;
 }
